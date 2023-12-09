@@ -1,0 +1,12 @@
+$objects = Get-ADObject -Filter *
+
+# Sort the objects by their creation timestamp in ascending order
+$objects = $objects | Sort-Object -Property whenCreated
+
+# Display the list of objects with their name and creation timestamp
+$objects | Format-Table -Property Name, whenCreated
+
+
+Get-ADComputer `
+>>   -Filter * `
+>>   -SearchBase "ou=NSM-Clients,dc=nsm,dc=email"

@@ -1,0 +1,23 @@
+
+Keep Teams/Windows active
+
+-----------------------------------------------------------------------------
+
+
+$WShell = New-Object -com "Wscript.Shell"
+cls
+
+$count = 0
+while ($true)
+{
+  $count = $count + 1
+  if($count -eq 5) {
+    cls
+    $count=0
+  }
+  $WShell.sendkeys("{SCROLLLOCK}")
+  Start-Sleep -Milliseconds 100
+  Write-Output "Toggle Scroll at $(Get-Date -Format u)"
+  $WShell.sendkeys("{SCROLLLOCK}")
+  Start-Sleep -Seconds 120
+}
