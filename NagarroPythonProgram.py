@@ -61,24 +61,26 @@ for member in memberships:
 
 destEmail = input("Who should we send the login credentials to: ")
 
+sendToList = ["\nSend Login info to: "+destEmail]
+
 homeFolderDest = R"to \\CLDORFILE01\HOME$\%username%"
 
 text = ["---------AD USER CREATION REQUEST----------",
 "\nDue: "+dueDate,
-"First Name: "+firstName,
-"Last Name: "+lastName,
-"Display Name: "+displayName,
-"Description: "+description,
-"Office: "+office,
-"Email: "+email,
-"Job Title: "+description,
-"Company: "+company,
-"Home Folder:\n\t Connect H: "+homeFolderDest,
-"Employee ID: "+employeeID,
-"ProxyAddresses:\n\t SMTP:"+email,
-"\t smtp:NSNL"+userName+"@goodfoodholdings.mail.onmicrosoft.com",
-"Send Login info to: "+destEmail, "Member Of: "]
+"\nFirst Name: "+firstName,
+"\nLast Name: "+lastName,
+"\nDisplay Name: "+displayName,
+"\nDescription: "+description,
+"\nOffice: "+office,
+"\nEmail: "+email,
+"\nJob Title: "+description,
+"\nCompany: "+company,
+"\nHome Folder:\n\t Connect H: "+homeFolderDest,
+"\nEmployee ID: "+employeeID,
+"\nProxyAddresses:\n\t SMTP:"+email,
+"\t smtp:NSNL"+userName+"@goodfoodholdings.mail.onmicrosoft.com", 
+"\nMember Of: "]
 
-textToOutfile = text + memberships
+textToOutfile = text + memberships + sendToList
 with open('NagarroUserRequest.txt', 'w') as f:
     f.writelines('\n'.join(textToOutfile))
