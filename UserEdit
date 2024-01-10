@@ -1,0 +1,106 @@
+# App to add, edit, or remove AD user accouts via a powershell script
+
+print(" AD User Editor\n")
+print("Please choose an option below:\n")
+
+# add ability to change option choices and quit app
+
+userChoice = input("1. Create\n2. Change\n3. Disable")
+
+#creates a txt doc containing the PS script to use
+def createUser():
+    dueDate = input("Due: ")
+    firstName = input("First Name: ")
+    lastName = input("Last Name: ")
+    displayName = firstName + " " + lastName
+    userName = firstName + "." + lastName
+    print("Display Name: ", displayName)
+    description = input("Description: ")
+    office = input("Office: ")
+    employeeID = input("Employee ID: ")
+
+    companyNumber = input("Which Banner? \n 1. New Seasons\n 2. New Leaf\n 3. GFH\n 4. BFLA\n 5. Metropolitan Market\n ") 
+
+    if companyNumber == '1':
+        company = "New Seasons Market"
+        domain = "@newseasonsmarket.com"
+    elif companyNumber == '2':
+        company = "New Leaf"
+        domain = "@newleaf.com"
+    elif companyNumber == '3':
+        company = "Good Food Holdings"
+        domain = "@goodfoodholdings.com"
+    elif companyNumber == '4':
+        company = "Bristol Farms/Lazy Acres"
+        domain = "@BFLA.com"
+    elif companyNumber == '5':
+        company = "Metropolitan Market"
+        domain = "@metropolitan-market.com"
+    else:
+        print("Invalid Entry, defaulting to NSM.")
+        company = "New Seasons Market"
+        domain = "@newseasonsmarket.com"
+
+    email = userName + domain
+    print("Email Address: ", email)
+    print("Job Title: ", description)
+    print("Company: ", company)
+
+    memberships = ["\tDomain Users", "\tNSMsgKnowB4User", "\tNSNLsgMS365LicenseP1", "\tNSNLsgMS365ExchangOnlinePlan1MBOnly"]
+
+    print("Member of: ")
+
+    for member in memberships:
+        print ("%s" % member)
+    
+    ta = "\t"
+    escape = " "
+    while escape != "n":
+        addMembership = input("Enter membership to add (n to quit): ")
+        if addMembership not in memberships and addMembership.lower() != "n" and "\t"+addMembership not in memberships:
+            memberships.append("\t"+addMembership)
+        if addMembership.lower() == "n":
+            escape = "n"
+            
+    for member in memberships:
+        print ("%s" % member)   
+
+    destEmail = input("Who should we send the login credentials to: ")
+    homeFolderDest = R"to \\CLDORFILE01\HOME$\%username%"
+    text = ["---------AD USER CREATION REQUEST----------",
+    "\nDue: "+dueDate,
+    "First Name: "+firstName,
+    "Last Name: "+lastName,
+    "Display Name: "+displayName,
+    "Description: "+description,
+    "Office: "+office,
+    "Email: "+email,
+    "Job Title: "+description,
+    "Company: "+company,
+    "Home Folder:\n\t Connect H: "+homeFolderDest,
+    "Employee ID: "+employeeID,
+    "ProxyAddresses:\n\t SMTP:"+email,
+    "\t smtp:NSNL"+userName+"@goodfoodholdings.mail.onmicrosoft.com",
+    "Send Login info to: "+destEmail, "Member Of: "]
+    textToOutfile = text + memberships
+    with open('NagarroUserRequest.txt', 'w') as f:
+        f.writelines('\n'.join(textToOutfile))
+
+def changeUser():
+    change_username = input("Which user would you like to change?\nEnter username: ")
+
+def disableUser():
+    disable_username = input("which user would you like to disable?\nEnter username: ")
+
+def mainMenu(userChoice):
+    if userChoice == "1":
+        createUser()
+    elif userChoice == "2":
+        changeUser()
+    elif userChoice == "3":
+        disableUser()
+    elif userChoice == "n" or userChoice == "N":
+        exit
+
+
+
