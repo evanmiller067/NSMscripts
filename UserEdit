@@ -5,7 +5,7 @@ print("Please choose an option below:\n")
 
 # add ability to change option choices and quit app
 
-userChoice = input("1. Create\n2. Change\n3. Disable")
+userChoice = input("1. Create\n2. Change\n3. Disable\n4. PowerShell User Create\nN to Quit")
 
 #creates a txt doc containing the PS script to use
 def createUser():
@@ -99,8 +99,88 @@ def mainMenu(userChoice):
         changeUser()
     elif userChoice == "3":
         disableUser()
+    elif userChoice == "p" or "P":
+        powerUser()
     elif userChoice == "n" or userChoice == "N":
         exit
 
+def userVarCreate():
+    dueDate = input("Due: ")
+    firstName = input("First Name: ")
+    lastName = input("Last Name: ")
+    displayName = firstName + " " + lastName
+    userName = firstName + "." + lastName
+    print("Display Name: ", displayName)
+    description = input("Description: ")
+    office = input("Office: ")
+    employeeID = input("Employee ID: ")
+    companyNumber = input("Which Banner? \n 1. New Seasons\n 2. New Leaf\n 3. GFH\n 4. BFLA\n 5. Metropolitan Market\n ") 
+    if companyNumber == '1':
+        company = "New Seasons Market"
+        domain = "@newseasonsmarket.com"
+    elif companyNumber == '2':
+        company = "New Leaf"
+        domain = "@newleaf.com"
+    elif companyNumber == '3':
+        company = "Good Food Holdings"
+        domain = "@goodfoodholdings.com"
+    elif companyNumber == '4':
+        company = "Bristol Farms/Lazy Acres"
+        domain = "@BFLA.com"
+    elif companyNumber == '5':
+        company = "Metropolitan Market"
+        domain = "@metropolitan-market.com"
+    else:
+        print("Invalid Entry, defaulting to NSM.")
+        company = "New Seasons Market"
+        domain = "@newseasonsmarket.com"
+    email = userName + domain
+    print("Email Address: ", email)
+    print("Job Title: ", description)
+    print("Company: ", company)
+    memberships = ["\tDomain Users", "\tNSMsgKnowB4User", "\tNSNLsgMS365LicenseP1", "\tNSNLsgMS365ExchangOnlinePlan1MBOnly"]
+    print("Member of: ")
+    for member in memberships:
+        print ("%s" % member)
+    ta = "\t"
+    escape = " "
+    while escape != "n":
+        addMembership = input("Enter membership to add (n to quit): ")
+        if addMembership not in memberships and addMembership.lower() != "n" and "\t"+addMembership not in memberships:
+            memberships.append("\t"+addMembership)
+        if addMembership.lower() == "n":
+            escape = "n"    
+    for member in memberships:
+        print ("%s" % member)
 
+    return displayName, userName, firstName, lastName, email, description, memberships, employeeID
 
+def powerUser():
+    #prompt user for variables, might need to call function for var return
+    userVarCreate()
+    # Open a new file in write mode
+    file = open("NewUserPwrSH.txt", "w")
+    # Define the text as a multi-line string
+    text = ["Import-Module ActiveDirectory",
+    "$UserProperties = @{",
+    "Name = "+displayName,
+    "SamAccountName = "+userName,
+    "UserPrincipalName = "+userName+"@nsm.email",
+    "GivenName = "+firstName,
+    "Surname = "+lastName,
+    "DisplayName = "+displayName,
+    "EmailAddress = "+email,
+    "Title = "+description,
+    "Path = ""OU=NSM-Users,DC=nsm,DC=email",
+    "AccountPassword = (ConvertTo-SecureString "Newseasonsmarket!" -AsPlainText -Force)",
+    "Enabled = $true",
+    "}",
+    "New-ADUser @UserProperties",
+    "Add-ADPrincipalGroupMembership -Identity "+userName+" -MemberOf "+memberships,
+    "proxyAddresses = SMTP:"+email+",smtp:NSNL"+userName+"@goodfoodholdings.mail.onmicrosoft.com",
+    #employee ID, home folder, company, description, 
+    ]
+    # Write the text to the file
+    file.write(text)
+    # Close the file
+    file.close()
