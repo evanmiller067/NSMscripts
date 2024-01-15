@@ -1,13 +1,19 @@
-# App to add, edit, or remove AD user accouts via a powershell script
+#python proj to create AD users
 
-print(" AD User Editor\n")
-print("Please choose an option below:\n")
+def mainMenu(userChoice):
+    if userChoice == "1":
+        createUser()
+    elif userChoice == "2":
+        changeUser()
+    elif userChoice == "3":
+        disableUser()
+    elif userChoice == "p" or "P":
+        powerUser()
+    elif userChoice == "n" or userChoice == "N":
+        exit
+    else:
+        print("\nInvalid selection, exiting...")
 
-# add ability to change option choices and quit app
-
-userChoice = input("1. Create\n2. Change\n3. Disable\n4. PowerShell User Create\nN to Quit")
-
-#creates a txt doc containing the PS script to use
 def createUser():
     dueDate = input("Due: ")
     firstName = input("First Name: ")
@@ -92,19 +98,8 @@ def changeUser():
 def disableUser():
     disable_username = input("which user would you like to disable?\nEnter username: ")
 
-def mainMenu(userChoice):
-    if userChoice == "1":
-        createUser()
-    elif userChoice == "2":
-        changeUser()
-    elif userChoice == "3":
-        disableUser()
-    elif userChoice == "p" or "P":
-        powerUser()
-    elif userChoice == "n" or userChoice == "N":
-        exit
-
 def userVarCreate():
+    global dueDate, firstName, lastName, displayName, userName, description, office, employeeID, company, domain, email, memberships
     dueDate = input("Due: ")
     firstName = input("First Name: ")
     lastName = input("Last Name: ")
@@ -151,9 +146,9 @@ def userVarCreate():
         if addMembership.lower() == "n":
             escape = "n"    
     for member in memberships:
-        print ("%s" % member)
+        return ("%s" % member)
 
-    return displayName, userName, firstName, lastName, email, description, memberships, employeeID
+    return displayName, userName, firstName, lastName, email, description, employeeID
 
 def powerUser():
     #prompt user for variables, might need to call function for var return
@@ -162,25 +157,34 @@ def powerUser():
     file = open("NewUserPwrSH.txt", "w")
     # Define the text as a multi-line string
     text = ["Import-Module ActiveDirectory",
-    "$UserProperties = @{",
-    "Name = "+displayName,
-    "SamAccountName = "+userName,
-    "UserPrincipalName = "+userName+"@nsm.email",
-    "GivenName = "+firstName,
-    "Surname = "+lastName,
-    "DisplayName = "+displayName,
-    "EmailAddress = "+email,
-    "Title = "+description,
-    "Path = ""OU=NSM-Users,DC=nsm,DC=email",
-    "AccountPassword = (ConvertTo-SecureString "Newseasonsmarket!" -AsPlainText -Force)",
-    "Enabled = $true",
-    "}",
-    "New-ADUser @UserProperties",
-    "Add-ADPrincipalGroupMembership -Identity "+userName+" -MemberOf "+memberships,
-    "proxyAddresses = SMTP:"+email+",smtp:NSNL"+userName+"@goodfoodholdings.mail.onmicrosoft.com",
-    #employee ID, home folder, company, description, 
-    ]
+            "$UserProperties = @{",
+            "Name = "+displayName,
+            "SamAccountName = "+userName,
+            "UserPrincipalName = "+userName+"@nsm.email",
+            "GivenName = "+firstName,
+            "Surname = "+lastName,
+            "DisplayName = "+displayName,
+            "EmailAddress = "+email,
+            "Title = "+description,
+            "Path = ""OU=NSM-Users,DC=nsm,DC=email",
+            "AccountPassword = (ConvertTo-SecureString  \"Newseasonsmarket!\" -AsPlainText -Force)",
+            "Enabled = $true",
+            "}",
+            "New-ADUser @UserProperties",
+            "proxyAddresses = SMTP:"+email+",smtp:NSNL"+userName+"@goodfoodholdings.mail.onmicrosoft.com",
+            "Add-ADPrincipalGroupMembership -Identity "+userName+" -MemberOf "
+            ]
+            #still need to return employee ID, home folder, company, description?
+    textToOutfile = text + memberships
     # Write the text to the file
-    file.write(text)
+    file.writelines('\n'.join(textToOutfile))
     # Close the file
     file.close()
+
+print(" AD User Editor\n")
+print("Please choose an option below:\n")
+userChoice = input("1. Create\n2. Change\n3. Disable\n4. PowerShell User Creator\nN to Quit\n")
+
+mainMenu(userChoice)
+
+print("Text file created in local app folder.")
