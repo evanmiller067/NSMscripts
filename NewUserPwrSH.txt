@@ -1,0 +1,24 @@
+Import-Module ActiveDirectory
+$UserProperties = @{
+Name = fn ln
+SamAccountName = fn.ln
+UserPrincipalName = fn.ln@nsm.email
+GivenName = fn
+Surname = ln
+DisplayName = fn ln
+EmailAddress = fn.ln@newseasonsmarket.com
+Title = desctest
+Path = OU=NSM-Users,DC=nsm,DC=email
+AccountPassword = (ConvertTo-SecureString  "Newseasonsmarket!" -AsPlainText -Force)
+Enabled = $true
+}
+New-ADUser @UserProperties
+proxyAddresses = SMTP:fn.ln@newseasonsmarket.com,smtp:NSNLfn.ln@goodfoodholdings.mail.onmicrosoft.com
+Add-ADPrincipalGroupMembership -Identity fn.ln -MemberOf 
+	Domain Users
+	NSMsgKnowB4User
+	NSNLsgMS365LicenseP1
+	NSNLsgMS365ExchangOnlinePlan1MBOnly
+	test1
+	test2
+	test3
